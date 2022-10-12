@@ -4,12 +4,12 @@
 \name{ModulonTA-package}
 \alias{ModulonTA}
 \alias{ModulonTA-package}
-\title{ModulonTA: What the Package Does (One Line, Title Case)}
+\title{ModulonTA: Modulon Target Analysis}
 \description{
-What the package does (one paragraph).
+ModulonTA performs a target analysis on modulon constituent elements.
 }
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Isaac Crespo \email{isaaccrespo@hotmail.com} (\href{https://orcid.org/0000-0003-3151-3901}{ORCID})
 
 }
 \keyword{internal}
