@@ -38,6 +38,7 @@ devtools::install_github("icrespocasajus/ModulonTA")
 
 ## Example
 
+
 This is a basic example which shows you how to solve a common problem:
 
 ```{r example, fig.height = 10, fig.width = 10, fig.align = "center",dpi=1200}
