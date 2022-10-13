@@ -4,7 +4,13 @@
 \alias{Find.Sat}
 \title{Find satellite transcription factors}
 \usage{
-Find.Sat(data, feature = "Redundancy", threshold = 0, quant.prob = NULL)
+Find.Sat(
+  data,
+  feature = "Redundancy",
+  threshold = 0,
+  quant.prob = NULL,
+  core = c()
+)
 }
 \arguments{
 \item{data}{A list object where each element contains a dataframe  including the 'Similarity','Redundancy','Overlap' values of the modulon constituent elements not included within a given modulon connected component.}
@@ -12,6 +18,8 @@ Find.Sat(data, feature = "Redundancy", threshold = 0, quant.prob = NULL)
 \item{feature}{Feature to be considered for the satellite detection. Possible values: c('Similarity','Redundancy','Overlap').}
 
 \item{threshold}{Cutoff value for either similarity, redundancy or overlap (number of common targets).}
+
+\item{core}{Modulon regulatory core elements.}
 }
 \value{
 List object with as many elements as the modulon connected components provided as the input. Each element of the list contains a character vector with the transcription factors above the threshold for the feature considered.

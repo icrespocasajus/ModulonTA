@@ -59,20 +59,64 @@ target.analysis.modulon.plot(data=results.target.analysis.modulon,feature = 'Red
 
 ``` r
 
-cc = cc.TILs
+connected.components = cc.TILs
 modulon.query = '3'
 connected.component.query = 'cc.3'
 
-results.target.analysis.modulon.wrt.cc.w.core = target.analysis.modulon.wrt.cc.manual.query.2(net = network,mod = modulons,cc = cc,mod.query = modulon.query,cc.query=connected.component.query)
+results.target.analysis.modulon.wrt.cc.w.core = target.analysis.modulon.wrt.cc.manual.query.2(net = network,mod = modulons,cc = connected.components,mod.query = modulon.query,cc.query=connected.component.query)
 ```
 
 ``` r
-satellites = Find.Sat(data = results.target.analysis.modulon.wrt.cc.w.core,feature = 'Redundancy',threshold = 0)
+regulatory.core.elements = connected.components[[modulon.query]][[connected.component.query]]
+satellites = Find.Sat(data = results.target.analysis.modulon.wrt.cc.w.core,feature = 'Redundancy',threshold = 0,core = regulatory.core.elements )
 ```
 
 ``` r
 Discriminant.Analysis.data = DA.TILs
 satellites.filtered = Filter.Sat(sat.data=satellites,DA.data = Discriminant.Analysis.data,DA=c("Any"),top.percent = 10)
+```
+
+``` r
+RegAUC = RegAUC.TILs
+target.analysis.heatmap(
+            net=network,
+            mod=modulons,
+            cc=connected.components,
+            mod.query =  modulon.query,
+            cc.query = connected.component.query,
+            feature='Redundancy',
+            sat=satellites.filtered,
+            DA.data=Discriminant.Analysis.data,
+            DA='Any',
+            RegAUC=RegAUC,
+            color= 'YlGn')
+#> 
+#> Attaching package: 'operators'
+#> The following object is masked from 'package:stringr':
+#> 
+#>     %>%
+#> The following objects are masked from 'package:base':
+#> 
+#>     options, strrep
+#> Loading required package: grid
+#> ========================================
+#> ComplexHeatmap version 2.13.2
+#> Bioconductor page: http://bioconductor.org/packages/ComplexHeatmap/
+#> Github page: https://github.com/jokergoo/ComplexHeatmap
+#> Documentation: http://jokergoo.github.io/ComplexHeatmap-reference
+#> 
+#> If you use it in published research, please cite either one:
+#> - Gu, Z. Complex heatmaps reveal patterns and correlations in multidimensional 
+#>     genomic data. Bioinformatics 2016.
+#> - Gu, Z. Complex Heatmap Visualization. iMeta 2022.
+#> 
+#> 
+#> The new InteractiveComplexHeatmap package can directly export static 
+#> complex heatmaps into an interactive Shiny app with zero effort. Have a try!
+#> 
+#> This message can be suppressed by:
+#>   suppressPackageStartupMessages(library(ComplexHeatmap))
+#> ========================================
 ```
 
 ## Author
