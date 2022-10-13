@@ -3,6 +3,10 @@
 
 # ModulonTA
 
+## Title
+
+Modulon Target Analysis
+
 ## Introduction
 
 <!-- badges: start -->
@@ -32,10 +36,10 @@ devtools::install_github("icrespocasajus/ModulonTA")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example which shows you how to perform a target analysis
+on a specific modulon and plot the results:
 
 ``` r
-library(ModulonSat)
 library(ModulonTA)
 library(corrplot)
 #> corrplot 0.92 loaded
@@ -52,6 +56,24 @@ target.analysis.modulon.plot(data=results.target.analysis.modulon,feature = 'Red
 ```
 
 <img src="man/figures/README-example-1.png" width="100%" style="display: block; margin: auto;" />
+
+``` r
+
+cc = cc.TILs
+modulon.query = '3'
+connected.component.query = 'cc.3'
+
+results.target.analysis.modulon.wrt.cc.w.core = target.analysis.modulon.wrt.cc.manual.query.2(net = network,mod = modulons,cc = cc,mod.query = modulon.query,cc.query=connected.component.query)
+```
+
+``` r
+satellites = Find.Sat(data = results.target.analysis.modulon.wrt.cc.w.core,feature = 'Redundancy',threshold = 0)
+```
+
+``` r
+Discriminant.Analysis.data = DA.TILs
+satellites.filtered = Filter.Sat(sat.data=satellites,DA.data = Discriminant.Analysis.data,DA=c("Any"),top.percent = 10)
+```
 
 ## Author
 
