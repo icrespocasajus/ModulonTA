@@ -41,7 +41,7 @@ library(corrplot)
 
 ## Example
 # For this example we will use the TILs dataset included in ModulonTA
-
+ 
 network = network.TILs
 modulons = modulons.TILs
 modulon.query = '3'

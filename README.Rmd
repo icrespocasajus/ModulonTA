@@ -97,6 +97,7 @@ satellites.filtered
 
 ```
 
+
 We can plot a summmary heatmap incliuding the modulon regulatory core and satellites showing the pair-wise target redundancy, redundancy with respect the core and the discriminant power across T cell subpopulations from the OPLS-DA:
 
 ```{r heatmap,out.width="100%",out.height="100%", fig.align = "center",dpi=1200, echo=T,warning=FALSE,message=FALSE}
@@ -119,6 +120,7 @@ target.analysis.heatmap(
 
 The annotation barplot on the right hand corresponds to the target analysis with respect to the modulon regulatory core as a whole; this value is the one used to select the satellites.
 The Core.Membership annotation corresponds with the correlation of the regulon activity and the firs principal component (PC1) of a PCA including only the modulon regulatory core constituent elements; high  membership might point out actual modulon regulatory core elements wrongly excluded from the the core.
+
 
 
 ## Author
