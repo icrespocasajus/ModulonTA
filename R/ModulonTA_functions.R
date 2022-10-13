@@ -280,6 +280,7 @@ target.analysis.manual.query = function(net,modulon,cc,query.mod,query.cc){
 #' @param data A list object where each element contains a dataframe  including the 'Similarity','Redundancy','Overlap' values of the modulon constituent elements not included within a given modulon connected component.
 #' @param feature Feature to be considered for the satellite detection. Possible values: c('Similarity','Redundancy','Overlap').
 #' @param threshold Cutoff value for either similarity, redundancy or overlap (number of common targets).
+#' @param core Modulon regulatory core elements.
 #' @return List object with as many elements as the modulon connected components provided as the input. Each element of the list contains a character vector with the transcription factors above the threshold for the feature considered.
 #' @details This function collects the modulon constituent elements sharing targets with a given modulon above a given threshold of similarity, redundancy or overlap.
 #' @examples 
@@ -294,9 +295,9 @@ target.analysis.manual.query = function(net,modulon,cc,query.mod,query.cc){
 #' }
 #' @rdname Find.Sat
 #' @export 
-Find.Sat = function(data,feature = 'Redundancy',threshold = 0,quant.prob = NULL){
+Find.Sat = function(data,feature = 'Redundancy',threshold = 0,quant.prob = NULL,core = c()){
   Satellites = lapply(data,function(x){
-    x[[feature]][x[[feature]][feature]>threshold,'TF']
+    setdiff(x[[feature]][x[[feature]][feature]>threshold,'TF'],core)
   })
   return(Satellites)
 }
@@ -990,7 +991,7 @@ target.analysis.modulon.plot = function(data,feature='Redundancy',color = 'YlGn'
     tl.srt = 45,
     col = corrplot::COL1(color, 10),
     is.corr = F,
-    title = paste("\n\n\n",'Modulon ',feature,sep = ""),tl.cex=0.75))
+    title = paste("\n\n\n",'Modulon Target ',feature,sep = ""),tl.cex=0.75))
 }
 
 
@@ -1378,7 +1379,7 @@ Modulon.complexheatmap = function(net,mod,cc,mod.query,cc.query,feature='Redunda
    # phm.input2 = phm.input
   #  phm.input2[is.na(phm.input2)]=0
     
-    Heatmap3D(phm.input2, name = "mat", column_title = "This is a 3D heatmap",col=c('white','red'),cluster_columns = F, cluster_rows=F)
+    #Heatmap3D(phm.input2, name = "mat", column_title = "This is a 3D heatmap",col=c('white','red'),cluster_columns = F, cluster_rows=F)
     
     
     
@@ -1511,7 +1512,7 @@ target.analysis.modulon.wrt.cc.manual.query.2 = function(net,mod,cc,mod.query,cc
 #' @examples 
 #' \dontrun{
 #' if(interactive()){
-#' plots = Modulon.complexheatmap.simple(
+#' plots = target.analysis.heatmap(
 #'  net = network.TILs,
 #'  mod = modulons.TILs,
 #'  cc = cc.TILs,
@@ -1523,15 +1524,12 @@ target.analysis.modulon.wrt.cc.manual.query.2 = function(net,mod,cc,mod.query,cc
 #'  print(plots[['3']])
 #' }
 #' }
-#' @rdname Modulon.complexheatmap.simple
+#' @rdname target.analysis.heatmap
 #' @export
-Modulon.complexheatmap.simple = function(net,mod,cc,mod.query,cc.query,feature='Redundancy',sat,DA.data,DA='Any',RegAUC,color= 'YlGn'){
-  # Libraries
-  library(stringr)
+target.analysis.heatmap = function(net,mod,cc,mod.query,cc.query,feature='Redundancy',sat,DA.data,DA='Any',RegAUC,color= 'YlGn',results.target.analysis.modulon){
   library(operators)
   library(ComplexHeatmap)
-  library(randomcoloR)
-  
+
   if(feature == 'Redundancy'){color = 'YlGn'}
   if(feature == 'Similarity'){color = 'Purples'}
   if(feature == 'Overlap'){color = 'YlOrBr'}
@@ -1539,43 +1537,17 @@ Modulon.complexheatmap.simple = function(net,mod,cc,mod.query,cc.query,feature='
   
   regulons = split(net$Target,net$Source)
   regulatory.core = cc[[mod.query]][[cc.query]]
-  core.sat = satellites.filtered[[paste(mod.query,cc.query,sep = '__')]]
+  core.sat = sat[[paste(mod.query,cc.query,sep = '__')]]
   
-  annotation = c()
-  for(i in 1:length(names(cc))){
-    modulon.tmp = names(cc)[i]
-    for(j in 1:length(names(cc[[modulon.tmp]]))){
-      cc.tmp = names(cc[[modulon.tmp]])[j]
-      for(k in 1:length(cc[[modulon.tmp]][[cc.tmp]])){
-        TF.tmp = cc[[modulon.tmp]][[cc.tmp]][k]
-        annotation = c(annotation,paste(modulon.tmp,cc.tmp,TF.tmp,sep = '__'))
-      }
-    } 
-  }  
-  annotation.df = data.frame(Modulon=ModulonCore::strsplit2(annotation,'__')[,1],
-                             cc=ModulonCore::strsplit2(annotation,'__')[,2],
-                             TF = ModulonCore::strsplit2(annotation,'__')[,3])
   
+  annotation.df = data.frame(TF = c(regulatory.core,core.sat))
+  annotation.df$Role =   annotation.df$Role = ifelse(annotation.df$TF %in% regulatory.core,'Core',ifelse(annotation.df$TF %in% core.sat,'Satellite','Other'))
   rownames(annotation.df)=annotation.df$TF
-  
-  # Select modulon of interest
-  
-  annotation.df = annotation.df[annotation.df$Modulon==mod.query,]
-  
-  annotation.df$id = paste(annotation.df$Modulon,annotation.df$cc,sep = '__')
-  annotation.df$Regulatory.Core = ifelse(annotation.df$TF %in% regulatory.core,'Yes','Not')
-  annotation.df$Regulatory.Core.Annotation = annotation.df$cc
-  annotation.df$Regulatory.Core.Annotation[annotation.df$TF %!in% regulatory.core]=NA
-  
-  annotation.df$Satellites = ifelse(annotation.df$TF %in% core.sat,'Yes','Not')
-  
-  
-  tab.tmp = table(annotation.df$id) > 1
-  true.cc = names(tab.tmp)[tab.tmp ]
-  annotation.df[annotation.df$id %!in% true.cc,'cc']=NA
   
   # Add modulon membership
   Modulon.Membership.results = Modulon.Membership(data=RegAUC,mod=mod)
+  
+  annotation.df$Modulon.Membership = Modulon.Membership.results[[mod.query]][rownames(annotation.df),'R.PC1']
   
   # Generate plots
   #plots = list()
@@ -1590,67 +1562,32 @@ Modulon.complexheatmap.simple = function(net,mod,cc,mod.query,cc.query,feature='
   feature.df=as.matrix(feature.df)
   diag(feature.df)=NA
   
+  feature.df = feature.df[rownames(annotation.df),rownames(annotation.df)]
+  
   
   # Add core membership to the annotation
-  Core.Membership.results = Core.Membership.manual(data=RegAUC,mod=mod[[mod.tmp]],core=cc[[mod.tmp]][[cc.tmp]] )
+  Core.Membership.results = Core.Membership.manual(data=RegAUC,mod=mod[[mod.tmp]],core=regulatory.core )
+  annotation.df$Core.Membership = Core.Membership.results[rownames(annotation.df),'R.PC1']
   
   
   
   # Annotation
   
-  annotation.c = data.frame(Regulatory.Core = annotation.df[rownames(feature.df),'Regulatory.Core'],
-                            Regulatory.Core.Satellite = ifelse(rownames(feature.df) %in% sat[[paste(mod.tmp,cc.tmp,sep = '__')]],'Yes','Not'),
-                            Connected.Component=annotation.df[rownames(feature.df),'cc'],
-                            Regulatory.Core.Membership = Core.Membership.results[rownames(feature.df),'R.PC1']#,
-                            #Modulon.Membership=Modulon.Membership.results[[mod.tmp]][rownames(feature.df),'R.PC1']
-  )
-  rownames(annotation.c)=rownames(feature.df)
+  annotation.c = annotation.df[,c('Role','Core.Membership')]
   
-  annotation.r = data.frame(Regulatory.Core = annotation.df[rownames(feature.df),'Regulatory.Core'],
-                            Regulatory.Core.Satellite = ifelse(rownames(feature.df) %in% sat[[paste(mod.tmp,cc.tmp,sep = '__')]],'Yes','Not')#,
-                            #Connected.Component=annotation.df[rownames(feature.df),'cc']
-  )
-  rownames(annotation.r)=rownames(feature.df)
+  annotation.r = annotation.df[,c('Role'),drop=F]
   
-  cc.color = distinctColorPalette(k = length(unique(annotation.c$Connected.Component)))
   ann_colors = list(
-    Modulon.Membership = c("white", "darkgreen"),
-    Connnected.Component = cc.color,
-    #Discriminant.Power = c("white", "black"),
-    Regulatory.Core.Membership = c("white", "firebrick"),
-    Regulatory.Core = c(Yes = 'black', Not='grey'),
-    Regulatory.Core.Satellite = c(Yes = 'red', Not='grey')
+    #Modulon.Membership = c("white", "darkblue"),
+    Core.Membership = c("white", "firebrick"),
+    Role=c(Core='black',Satellite='red',Other='grey')
   )
-  
-  my.breaks <- c(seq(-1, 1, by=0.001)) 
-  my.colors <- colorRampPalette(colors = c("white", "black"))(length(my.breaks))
-  my.colors.df = data.frame(colors = my.colors,breaks=as.numeric(round(my.breaks,digits = 3)))
-  
   
   # Heatmap input
-  phm.input = feature.df[order(annotation.c$Connected.Component,decreasing = T),order(annotation.c$Connected.Component,decreasing = T)]
-  phm.input =phm.input [c(regulatory.core,core.sat),]
-  annotation.c=annotation.c[rownames( phm.input),]
-  annotation.r=annotation.r[rownames( phm.input),]
+  phm.input = feature.df
+  # Gaps 
+  gaps = length(regulatory.core)
   
-  # Gaps connected components
-  generate.gaps = function(data,col){
-    character.tmp = data[,col,drop=T]
-    gaps = c()
-    for(i in 1:length(character.tmp)){
-      if(!(is.na(character.tmp[i]))&!(is.na(character.tmp[i+1]))&!(character.tmp[i] == character.tmp[i+1])){gaps = c(gaps,i)}
-    }
-    for(i in 1:length(character.tmp)){
-      if(!(is.na(character.tmp[i]))&(is.na(character.tmp[i+1]))){gaps = c(gaps,i)}
-    }
-    return(gaps)
-  }
-  
-  gaps = generate.gaps(data=annotation.c[rownames(phm.input),],col='Connected.Component')
-  
-  #Edit for ComplexHeatmap
-  annotation.c$Regulatory.Core[is.na(annotation.c$Regulatory.Core)] = 'Not'
-  annotation.r$Regulatory.Core[is.na(annotation.c$Regulatory.Core)] = 'Not'
   
   phm.tmp = ComplexHeatmap::pheatmap(
     name = feature,
@@ -1658,7 +1595,7 @@ Modulon.complexheatmap.simple = function(net,mod,cc,mod.query,cc.query,feature='
     # annotation_legend = c(T,T,T,T),
     color = corrplot::COL1(color, 10),
     phm.input ,
-    main = paste(feature,' Modulon ',mod.tmp,'core ',cc.tmp,sep = ' '),
+    main = paste(feature,'Modulon ',mod.tmp,'\n(core ',cc.tmp,'and satellites)',sep = ' '),
     display_numbers = F,
     cluster_rows = F,
     cluster_cols = F,
@@ -1675,11 +1612,18 @@ Modulon.complexheatmap.simple = function(net,mod,cc,mod.query,cc.query,feature='
     scale='none'
   )
   
-  mat = results.target.analysis.modulon[[feature]]
-  mat=mat[rownames(phm.input),colnames(phm.input)]
-  feature.wrt.core = results.target.analysis.modulon.wrt.cc.w.core[[paste(mod.query,cc.query,sep = '__')]][[feature]][rownames(mat),feature]
-  row_ha = rowAnnotation(Feature = anno_barplot(feature.wrt.core),annotation_legend_param = list(just = c("left", "bottom")))
+  # Target analysis wrt the core
+  results.target.analysis.modulon.wrt.cc.w.core = target.analysis.modulon.wrt.cc.manual.query.2(
+                                                          net = net,
+                                                          mod = mod,
+                                                          cc = cc,
+                                                          mod.query = mod.query,
+                                                          cc.query = cc.query)
   
+  feature.wrt.core = results.target.analysis.modulon.wrt.cc.w.core[[paste(mod.query,cc.query,sep = '__')]][[feature]][rownames(phm.input),feature]
+  row_ha = rowAnnotation(Feature = anno_barplot(feature.wrt.core,width = unit(3, "cm")),annotation_legend_param = list(just = c("left", "bottom")))
+  names(row_ha)=paste(feature,' wrt core',sep = '')
+  row_ha@anno_list[["Redundancy wrt core"]]@label = paste(feature,' wrt core',sep = '')
   
   # DA heatmap
   annotation.c.DA = annotation.c
@@ -1694,7 +1638,6 @@ Modulon.complexheatmap.simple = function(net,mod,cc,mod.query,cc.query,feature='
     name = 'OPLS-DA',
     #legend = F,
     main = 'OPLS-DA',
-    color = corrplot::COL1('Greys', 10),
     heatmap.DA ,
     #main = paste(feature,' Modulon ',mod.tmp,'Discriminant Power',sep = ' '),
     display_numbers = F,
@@ -1712,31 +1655,8 @@ Modulon.complexheatmap.simple = function(net,mod,cc,mod.query,cc.query,feature='
     fontsize_col = 8,
     scale='none'
   )
-  
-  # phm.input2 = phm.input
-  #  phm.input2[is.na(phm.input2)]=0
-  
-  Heatmap3D(phm.input2, name = "mat", column_title = "This is a 3D heatmap",col=c('white','red'),cluster_columns = F, cluster_rows=F)
-  
-  
-  
-  
-  plot.tmp = phm.tmp + row_ha
-  plot.listt = phm.tmp + row_ha + phm.DA.tmp
-  plot.list = phm.DA.tmp + row_ha + phm.tmp
-  
-  plot.list = phm.DA.tmp + phm.tmp
-  
-  #draw(final.plot, auto_adjust = c(F))
-  plot= draw(plot.list, auto_adjust = F, padding = unit(c(2, 2, 10, 2), "mm"),heatmap_legend_side = "bottom", annotation_legend_side = "right",merge_legend = TRUE)
-  plot= draw(plot.list, auto_adjust = F, padding = unit(c(2, 2, 10, 2), "mm"),heatmap_legend_side = "bottom", annotation_legend_side = "right")
-  
-  decorate_heatmap_body("OPLS-DA", {grid.text("OPLS-DA", y = unit(1, "npc") + unit(2, "mm"), just = "bottom")})
-  
-  
-  dev.off()
-  gc()
-  
-  return(plot)
+
+  plot.list = phm.DA.tmp + phm.tmp + row_ha
+  draw(plot.list, auto_adjust = F, padding = unit(c(2, 2, 10, 2), "mm"),heatmap_legend_side = "bottom", annotation_legend_side = "right",merge_legend = TRUE)
 }
 
