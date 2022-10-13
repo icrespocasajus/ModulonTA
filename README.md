@@ -9,11 +9,6 @@ Modulon Target Analysis
 
 ## Introduction
 
-<!-- badges: start -->
-
-[![R-CMD-check](https://github.com/icrespocasajus/ModulonTA/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/icrespocasajus/ModulonTA/actions/workflows/R-CMD-check.yaml)
-<!-- badges: end -->
-
 The goal of ModulonTA is to analyze the downstream direct targets of
 modulon constituent transcription factors in order to assess the regulon
 similarity, redundancy and overlap between pairs of transcription
