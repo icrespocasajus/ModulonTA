@@ -71,7 +71,7 @@ connected.components = cc.TILs
 modulon.query = '3'
 connected.component.query = 'cc.3'
 
-results.target.analysis.modulon.wrt.cc.w.core = target.analysis.modulon.wrt.cc.manual.query.2(net = network,mod = modulons,cc = connected.components,mod.query = modulon.query,cc.query=connected.component.query)
+results.target.analysis.modulon.wrt.cc.w.core = target.analysis.modulon.wrt.cc.manual.query(net = network,mod = modulons,cc = connected.components,mod.query = modulon.query,cc.query=connected.component.query)
 head(results.target.analysis.modulon.wrt.cc.w.core[[1]][['Redundancy']])
 ```
 
@@ -98,9 +98,9 @@ satellites.filtered
 ```
 
 
-We can plot a summmary heatmap incliuding the modulon regulatory core and satellites showing the pair-wise target redundancy, redundancy with respect the core and the discriminant power across T cell subpopulations from the OPLS-DA:
+We can plot a summmary heatmap including the modulon regulatory core and satellites showing the pair-wise target redundancy, redundancy with respect the core and the discriminant power across T cell subpopulations from the OPLS-DA:
 
-```{r heatmap,out.width="90%",out.height="90%", fig.align = "center",dpi=1200, echo=T,warning=FALSE,message=FALSE}
+```{r heatmap, fig.height = 7, fig.width = 6,out.width="100%",out.height="100%", echo=T,warning=FALSE,message=FALSE,dpi=1200}
 RegAUC = RegAUC.TILs
 target.analysis.heatmap(
             net=network,

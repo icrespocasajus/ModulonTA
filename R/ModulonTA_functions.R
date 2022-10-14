@@ -1094,14 +1094,14 @@ target.analysis.modulon.wrt.cc = function(net,modulons,cc){
 #' @examples 
 #' \dontrun{
 #' if(interactive()){
-#' target.analysis.modulon.wrt.cc.manual.query(net = network.TILs,
+#' target.analysis.modulon.wrt.cc.manual.query.wo.core(net = network.TILs,
 #' mod = modulons.TILs,
 #' cc = cc.TILs,
 #' query.mod = '3',
 #' query.cc= 'cc.3')
 #' }
 #' }
-#' @rdname target.analysis.modulon.wrt.cc.manual.query
+#' @rdname target.analysis.modulon.wrt.cc.manual.query.wo.core
 #' @export 
 target.analysis.modulon.wrt.cc.manual.query = function(net,modulon,cc,mod.query,cc.query){
   network = net
@@ -1430,9 +1430,9 @@ Modulon.complexheatmap = function(net,mod,cc,mod.query,cc.query,feature='Redunda
 #' cc.query = 'cc.3')
 #' }
 #' }
-#' @rdname target.analysis.modulon.wrt.cc.manual.query.2
+#' @rdname target.analysis.modulon.wrt.cc.manual.query
 #' @export 
-target.analysis.modulon.wrt.cc.manual.query.2 = function(net,mod,cc,mod.query,cc.query){
+target.analysis.modulon.wrt.cc.manual.query = function(net,mod,cc,mod.query,cc.query){
   network = net
   modulons = mod
   cc = cc
@@ -1505,22 +1505,28 @@ target.analysis.modulon.wrt.cc.manual.query.2 = function(net,mod,cc,mod.query,cc
 #' @param cc List with the connected components generated with find.connected.components() or regulatory cores as the output of core()
 #' @param mod.query Name of the query modulon.
 #' @param cc.query Name of the connected component considered as modulon regulatory core.
-#' @param feature Target analysis feature to be displayed; one of c("Redundancy","Similarity","Overlap")
+#' @param feature Target analysis feature to be displayed; one of c("Redundancy","Similarity","Overlap").
+#' @param sat Character vector with satellites.
+#' @param DA.data Discriminant analysis results.
 #' @param RegAUC Regulon activity matrix.
+#' @param results.target.analysis.modulon Target analysis results.
 #' @return List object with as many elements as modulons; each element contain a heatmap.
 #' @details This function generates a heatmap to explore the results of the modulon target analysis
 #' @examples 
 #' \dontrun{
 #' if(interactive()){
+#' results.target.analysis.modulon =  target.analysis.modulon.wrt.cc.manual.query(net = network.TILs,mod = modulons.TILs,cc = cc.TILs,mod.query = '3',cc.query='cc.3')
 #' plots = target.analysis.heatmap(
 #'  net = network.TILs,
 #'  mod = modulons.TILs,
 #'  cc = cc.TILs,
-#'  regulatory.core = Modulon.Cores.TILs,
+#'  mod.query = '3',
+#'  cc.query = 'cc.3',
 #'  feature = 'Redundancy',
 #'  sat = satellites.filtered,
+#'  DA.data = DA.data.TILs,
 #'  RegAUC = RegAUC.TILs,
-#'  color= 'YlGn')
+#'  results.target.analysis.modulon = results.target.analysis.modulon)
 #'  print(plots[['3']])
 #' }
 #' }
@@ -1595,9 +1601,9 @@ target.analysis.heatmap = function(net,mod,cc,mod.query,cc.query,feature='Redund
     legend = T,
     # annotation_legend = c(T,T,T,T),
     color = corrplot::COL1(color, 10),
-    fontsize = 5,
+    fontsize = 8,
     phm.input ,
-    main = paste('\n\n',feature,'Modulon ',mod.tmp,' (core ',cc.tmp,'and satellites)',sep = ' '),
+    main = paste('\n\n',feature,'Modulon ',mod.tmp,'\n(core ',cc.tmp,'and satellites)',sep = ' '),
     display_numbers = F,
     cluster_rows = F,
     cluster_cols = F,
@@ -1607,7 +1613,7 @@ target.analysis.heatmap = function(net,mod,cc,mod.query,cc.query,feature='Redund
     annotation_row = annotation.r,
     annotation_color = ann_colors,
     fontsize_row = 8,
-    show_rownames = T,
+    show_rownames = 8,
     cellwidth = 8,
     cellheight = 8,
     fontsize_col = 8,
@@ -1615,7 +1621,7 @@ target.analysis.heatmap = function(net,mod,cc,mod.query,cc.query,feature='Redund
   )
   
   # Target analysis wrt the core
-  results.target.analysis.modulon.wrt.cc.w.core = target.analysis.modulon.wrt.cc.manual.query.2(
+  results.target.analysis.modulon.wrt.cc.w.core = target.analysis.modulon.wrt.cc.manual.query(
                                                           net = net,
                                                           mod = mod,
                                                           cc = cc,
@@ -1640,7 +1646,7 @@ target.analysis.heatmap = function(net,mod,cc,mod.query,cc.query,feature='Redund
     name = '\n\nOPLS-DA',
     #legend = F,
     main = 'OPLS-DA',
-    fontsize = 5,
+    fontsize = 8,
     heatmap.DA ,
     #main = paste(feature,' Modulon ',mod.tmp,'Discriminant Power',sep = ' '),
     display_numbers = F,
@@ -1652,7 +1658,7 @@ target.analysis.heatmap = function(net,mod,cc,mod.query,cc.query,feature='Redund
     #annotation_row = annotation.r,
     #annotation_color = ann_colors,
     fontsize_row = 8,
-    show_rownames = T,
+    show_rownames = 8,
     cellwidth = 8,
     cellheight = 8,
     fontsize_col = 8,
@@ -1660,7 +1666,6 @@ target.analysis.heatmap = function(net,mod,cc,mod.query,cc.query,feature='Redund
   )
 
   plot.list = phm.DA.tmp + phm.tmp + row_ha
-  draw(plot.list, auto_adjust = F, padding = unit(c(2, 2, 10, 2), "mm"),heatmap_legend_side = "bottom", annotation_legend_side = "right",merge_legend = TRUE)
-
+  return(draw(plot.list, auto_adjust = F, padding = unit(c(2, 2, 10, 2), "mm"),heatmap_legend_side = "bottom", annotation_legend_side = "bottom",merge_legend = TRUE))
 }
 

@@ -66,7 +66,7 @@ connected.components = cc.TILs
 modulon.query = '3'
 connected.component.query = 'cc.3'
 
-results.target.analysis.modulon.wrt.cc.w.core = target.analysis.modulon.wrt.cc.manual.query.2(net = network,mod = modulons,cc = connected.components,mod.query = modulon.query,cc.query=connected.component.query)
+results.target.analysis.modulon.wrt.cc.w.core = target.analysis.modulon.wrt.cc.manual.query(net = network,mod = modulons,cc = connected.components,mod.query = modulon.query,cc.query=connected.component.query)
 head(results.target.analysis.modulon.wrt.cc.w.core[[1]][['Redundancy']])
 #>            TF Redundancy
 #> Crem     Crem 0.31269350
@@ -108,8 +108,8 @@ satellites.filtered
 #> [15] "Mxd3"
 ```
 
-We can plot a summmary heatmap incliuding the modulon regulatory core
-and satellites showing the pair-wise target redundancy, redundancy with
+We can plot a summmary heatmap including the modulon regulatory core and
+satellites showing the pair-wise target redundancy, redundancy with
 respect the core and the discriminant power across T cell subpopulations
 from the OPLS-DA:
 
@@ -130,7 +130,7 @@ target.analysis.heatmap(
             color= 'YlGn')
 ```
 
-<img src="man/figures/README-heatmap-1.png" width="90%" height="90%" style="display: block; margin: auto;" />
+<img src="man/figures/README-heatmap-1.png" width="100%" height="100%" />
 
 The annotation barplot on the right hand corresponds to the target
 analysis with respect to the modulon regulatory core as a whole; this
