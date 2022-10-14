@@ -30,9 +30,15 @@ target.analysis.heatmap(
 
 \item{cc.query}{Name of the connected component considered as modulon regulatory core.}
 
-\item{feature}{Target analysis feature to be displayed; one of c("Redundancy","Similarity","Overlap")}
+\item{feature}{Target analysis feature to be displayed; one of c("Redundancy","Similarity","Overlap").}
+
+\item{sat}{Character vector with satellites.}
+
+\item{DA.data}{Discriminant analysis results.}
 
 \item{RegAUC}{Regulon activity matrix.}
+
+\item{results.target.analysis.modulon}{Target analysis results.}
 }
 \value{
 List object with as many elements as modulons; each element contain a heatmap.
@@ -46,15 +52,18 @@ This function generates a heatmap to explore the results of the modulon target a
 \examples{
 \dontrun{
 if(interactive()){
+results.target.analysis.modulon =  target.analysis.modulon.wrt.cc.manual.query(net = network.TILs,mod = modulons.TILs,cc = cc.TILs,mod.query = '3',cc.query='cc.3')
 plots = target.analysis.heatmap(
  net = network.TILs,
  mod = modulons.TILs,
  cc = cc.TILs,
- regulatory.core = Modulon.Cores.TILs,
+ mod.query = '3',
+ cc.query = 'cc.3',
  feature = 'Redundancy',
  sat = satellites.filtered,
+ DA.data = DA.data.TILs,
  RegAUC = RegAUC.TILs,
- color= 'YlGn')
+ results.target.analysis.modulon = results.target.analysis.modulon)
  print(plots[['3']])
 }
 }

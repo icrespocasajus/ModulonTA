@@ -41,7 +41,7 @@ library(corrplot)
 
 ## Example
 # For this example we will use the TILs dataset included in ModulonTA
- 
+
 network = network.TILs
 modulons = modulons.TILs
 modulon.query = '3'
@@ -130,7 +130,7 @@ target.analysis.heatmap(
             color= 'YlGn')
 ```
 
-<img src="man/figures/README-heatmap-1.png" width="100%" height="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-heatmap-1.png" width="90%" height="90%" style="display: block; margin: auto;" />
 
 The annotation barplot on the right hand corresponds to the target
 analysis with respect to the modulon regulatory core as a whole; this

@@ -100,7 +100,7 @@ satellites.filtered
 
 We can plot a summmary heatmap incliuding the modulon regulatory core and satellites showing the pair-wise target redundancy, redundancy with respect the core and the discriminant power across T cell subpopulations from the OPLS-DA:
 
-```{r heatmap,out.width="100%",out.height="100%", fig.align = "center",dpi=1200, echo=T,warning=FALSE,message=FALSE}
+```{r heatmap,out.width="90%",out.height="90%", fig.align = "center",dpi=1200, echo=T,warning=FALSE,message=FALSE}
 RegAUC = RegAUC.TILs
 target.analysis.heatmap(
             net=network,

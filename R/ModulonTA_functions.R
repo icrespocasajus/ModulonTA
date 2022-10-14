@@ -1529,6 +1529,7 @@ target.analysis.modulon.wrt.cc.manual.query.2 = function(net,mod,cc,mod.query,cc
 target.analysis.heatmap = function(net,mod,cc,mod.query,cc.query,feature='Redundancy',sat,DA.data,DA='Any',RegAUC,color= 'YlGn',results.target.analysis.modulon){
   library(operators)
   library(ComplexHeatmap)
+  library(corrplot)
 
   if(feature == 'Redundancy'){color = 'YlGn'}
   if(feature == 'Similarity'){color = 'Purples'}
@@ -1594,8 +1595,9 @@ target.analysis.heatmap = function(net,mod,cc,mod.query,cc.query,feature='Redund
     legend = T,
     # annotation_legend = c(T,T,T,T),
     color = corrplot::COL1(color, 10),
+    fontsize = 5,
     phm.input ,
-    main = paste(feature,'Modulon ',mod.tmp,'\n(core ',cc.tmp,'and satellites)',sep = ' '),
+    main = paste('\n\n',feature,'Modulon ',mod.tmp,' (core ',cc.tmp,'and satellites)',sep = ' '),
     display_numbers = F,
     cluster_rows = F,
     cluster_cols = F,
@@ -1605,7 +1607,7 @@ target.analysis.heatmap = function(net,mod,cc,mod.query,cc.query,feature='Redund
     annotation_row = annotation.r,
     annotation_color = ann_colors,
     fontsize_row = 8,
-    show_rownames = 8,
+    show_rownames = T,
     cellwidth = 8,
     cellheight = 8,
     fontsize_col = 8,
@@ -1635,9 +1637,10 @@ target.analysis.heatmap = function(net,mod,cc,mod.query,cc.query,feature='Redund
   colnames(heatmap.DA)=gsub('_Vs_background','',colnames(heatmap.DA))
   
   phm.DA.tmp = ComplexHeatmap::pheatmap(
-    name = 'OPLS-DA',
+    name = '\n\nOPLS-DA',
     #legend = F,
     main = 'OPLS-DA',
+    fontsize = 5,
     heatmap.DA ,
     #main = paste(feature,' Modulon ',mod.tmp,'Discriminant Power',sep = ' '),
     display_numbers = F,
@@ -1649,7 +1652,7 @@ target.analysis.heatmap = function(net,mod,cc,mod.query,cc.query,feature='Redund
     #annotation_row = annotation.r,
     #annotation_color = ann_colors,
     fontsize_row = 8,
-    show_rownames = 8,
+    show_rownames = T,
     cellwidth = 8,
     cellheight = 8,
     fontsize_col = 8,
@@ -1658,5 +1661,6 @@ target.analysis.heatmap = function(net,mod,cc,mod.query,cc.query,feature='Redund
 
   plot.list = phm.DA.tmp + phm.tmp + row_ha
   draw(plot.list, auto_adjust = F, padding = unit(c(2, 2, 10, 2), "mm"),heatmap_legend_side = "bottom", annotation_legend_side = "right",merge_legend = TRUE)
+
 }
 
