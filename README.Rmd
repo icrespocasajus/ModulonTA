@@ -25,7 +25,7 @@ Modulon Target Analysis
 The goal of ModulonTA is to analyze the downstream direct targets of modulon constituent transcription factors in order to assess the regulon similarity, redundancy and overlap between pairs of transcription factors, or between transcription factors and a modulon regulatory core. This information can be further used to identify modulon regulatory core satellite transcription factors, or transcription factors that reinforce the downstream regulatory effect of a given modulon regulatory core.
 
 ```{r out.width="100%",out.height="100%", fig.align = "center",dpi=1200, echo=F}
-knitr::include_graphics("./man/figures/ModulonTA_flowchart.jpeg")
+knitr::include_graphics("./man/figures/ModulonTA_flowchart.jpg")
 ```
 
 ## Installation
@@ -83,7 +83,7 @@ Using the results of the target analysis with respect to the modulon regulatory 
 
 ```{r }
 regulatory.core.elements = connected.components[[modulon.query]][[connected.component.query]]
-satellites = Find.Sat(data = results.target.analysis.modulon.wrt.cc.w.core,feature = feature,threshold = 0,core = regulatory.core.elements )
+satellites = Find.Sat(data = results.target.analysis.modulon.wrt.cc.w.core,feature = "Redundancy",threshold = 0,core = regulatory.core.elements )
 satellites
 ```
 

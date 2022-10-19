@@ -17,7 +17,7 @@ This information can be further used to identify modulon regulatory core
 satellite transcription factors, or transcription factors that reinforce
 the downstream regulatory effect of a given modulon regulatory core.
 
-<img src="./man/figures/ModulonTA_flowchart.jpeg" width="100%" height="100%" style="display: block; margin: auto;" />
+<img src="./man/figures/ModulonTA_flowchart.jpg" width="100%" height="100%" style="display: block; margin: auto;" />
 
 ## Installation
 
@@ -86,7 +86,7 @@ regulatory core we are going to search for the satellites:
 
 ``` r
 regulatory.core.elements = connected.components[[modulon.query]][[connected.component.query]]
-satellites = Find.Sat(data = results.target.analysis.modulon.wrt.cc.w.core,feature = feature,threshold = 0,core = regulatory.core.elements )
+satellites = Find.Sat(data = results.target.analysis.modulon.wrt.cc.w.core,feature = "Redundancy",threshold = 0,core = regulatory.core.elements )
 satellites
 #> $`3__cc.3`
 #>  [1] "Zmiz1"   "Smarca4" "Eomes"   "Runx2"   "Rora"    "Nr3c1"   "Cebpd"  
